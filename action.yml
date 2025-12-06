@@ -8,20 +8,43 @@ branding:
 inputs:
   retention-days:
     description: 'How many days to keep the zip archive'
-    default: 7
+    default: 3
+  node-version:
+    description: 'Which version of node do you want?'
+    default: 16
+  install-composer:
+    description: 'Do you want to install composer?'
+    default: false
+  npm-run-build:
+    description: 'Do you want to run npm build?'
+    default: false
 
 runs:
   using: 'composite'
   steps:
+    - name: Use specific node version
+      id: node-setup
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ inputs.node-version }}
+
     - name: Running the action to generate zip archive
       id: archive
       run: ${{ github.action_path }}/run.sh
       shell: bash
+      env:
+        INSTALL_COMPOSER: ${{ inputs.install-composer }}
+        NPM_RUN_BUILD: ${{ inputs.npm-run-build }}
+
+    - name: Unzip the archive
+      id: unzip
+      run: unzip wordpress.zip -d dist-archive
+      shell: bash
 
     - name: Upload the archive as an artifact
       id: upload
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ github.event.repository.name }}
-        path: ./wordpress.zip
+        path: dist-archive
         retention-days: ${{ inputs.retention-days }}
