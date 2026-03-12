@@ -12,7 +12,7 @@ echo '✅ Successfully installed WP-CLI'
 
 # Install dist-archive command
 echo '✨Installing dist-archive-command...✨'
-wp package install wp-cli/dist-archive-command
+wp package install wp-cli/dist-archive-command:3.1.0
 echo '✅ Successfully installed dist-archive-command'
 
 # Install Composer if requested
